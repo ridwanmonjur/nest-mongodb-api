@@ -88,8 +88,8 @@ export class CourseService {
         classDays: ['Monday', 'Wednesday', 'Friday'],
         classTime: '20:00 - 22:00',
       },
-    },
-  ];
+      },
+    ];
 
     const seededCourses = await this.courseModel.create(coursesToSeed);
     return seededCourses;
