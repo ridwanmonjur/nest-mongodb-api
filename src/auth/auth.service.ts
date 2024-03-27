@@ -17,7 +17,6 @@ export class AuthService {
   async login(loginDto: LoginDto): Promise<any> {
     const {email, password} = loginDto;
     const user: User = await this.usersService.findByEmail(email);
-    console.log({user});
     if (!user) {
       throw new BadRequestException('User not found');
     }
@@ -31,7 +30,6 @@ export class AuthService {
 
   async register(user: SignupDto): Promise<any> {
     const existingUser = await this.usersService.findByEmail(user.email);
-    console.log({existingUser, exists: true});
     if (existingUser) {
       throw new BadRequestException('email already exists');
     }

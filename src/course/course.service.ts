@@ -22,7 +22,6 @@ export class CourseService {
 
   async findAll(filterDto: CourseFilterDto): Promise<PaginateResult<Course[]>> {
     let { startDate, endDate, page, limit } = filterDto;
-    console.log({ page, limit});
     page = page ? parseInt(page) : 1;
     limit = limit ? parseInt(limit) : 10;
     const conditions: any = {};
@@ -34,7 +33,6 @@ export class CourseService {
       conditions['schedule.endDate'] = this.getQuery(endDate);
     }
 
-    console.log({conditions, filterDto, page, limit});
     return await this.courseModel
       .paginate( {...conditions }, { page, limit });
   }

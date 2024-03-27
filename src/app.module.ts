@@ -8,7 +8,6 @@ import * as dotenv from 'dotenv';
 import { MongooseModule } from '@nestjs/mongoose';
 
 dotenv.config()
-console.log({env: process.env.MONGO_URI})
 @Module({
   imports: [
     MongooseModule.forRoot(process.env.MONGO_URI,

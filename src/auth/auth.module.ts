@@ -8,7 +8,6 @@ import { AuthController } from './auth.controller';
 import * as dotenv from 'dotenv';
 
 dotenv.config()
-console.log({secret: process.env.JWT_SECRET})
 @Module({
   imports: [
     UserModule,
