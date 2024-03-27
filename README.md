@@ -32,8 +32,12 @@ http://localhost:8000/api/user/student/testData
 
 http://localhost:8000/api/auth/testData
 
+```
 
-3. Testing the links:
+
+## Testing the data
+
+```bash
 
 1. Sign up as admin first
 
@@ -45,7 +49,7 @@ http://localhost:8000/auth/signup
   "roles": ["admin"]
 }
 
-2. Login as admin
+2. Login as admin and save accesss token in bearer, not authorization header
 
 http://localhost:8000/auth/login
 
@@ -53,6 +57,36 @@ http://localhost:8000/auth/login
   "email": "new22@example.com",
   "password": "123456"
 }
+
+2.1. Course List with pagination and datewise filtration
+
+Must have bearer token
+
+http://localhost:8000/api/course?page=1&startDate[gte]=2023-04-01
+
+http://localhost:8000/api/course?page=1&endDate[lte]=2023-04-01
+
+
+2.2. Course List CRUD 
+
+Must have bearer token
+
+GET, PUT, DELETE
+http://localhost:8000/api/course/{id}
+
+CREATE
+http://localhost:8000/api/course/
+
+```
+
+
+```bash
+3. Student List
+
+http://localhost:8000/api/user/student/
+
+
+http://localhost:8000/api/user/{id}
 
 ```
 
