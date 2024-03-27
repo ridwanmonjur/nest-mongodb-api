@@ -8,7 +8,7 @@ import { User } from './entities/user.entity';
 import { Address } from './entities/address.entity';
 import { Role } from 'src/role.enum';
 import { Admin } from './entities/admin.entity';
-
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -39,46 +39,52 @@ export class UserService {
   }
 
   async createTestStudents(): Promise<Student[]> {
-    const addressesToCreate = [
-      { street: 'Green Road', city: 'Banani', country: 'Country 1' },
-      { street: 'Street 2', city: 'Dhanmondi', country: 'Country 2' },
+    await this.userModel.deleteMany({ roles: Role.Student });
+    const hashed = await bcrypt.hash('123456', 10);
+    const usersToCreate = [
+      { email: 'ridwan@example.com', password: hashed, roles: [Role.Student] },
+      { email: 'monjur@example.com', password: hashed, roles: [Role.Student] }
     ];
-    const createdAddresses = await this.addressModel.create(addressesToCreate);
+    const createdUsers = await this.userModel.create(usersToCreate);
 
     const studentsToCreate = [
       { 
         name: 'Ridwan', 
         instituteName: 'Brac', 
         phoneNumber: '01952996432',
-        address: createdAddresses[0]._id,
-        user: { email: 'ridwan@example.com', password: '123456', roles: [Role.Student] }
+        address: { street: 'Kemal Avenue', city: 'Banani', country: 'Bangladesh' },
+        user: createdUsers[0]._id
       },
       { 
         name: 'Monjur', 
         instituteName: 'NSU', 
         phoneNumber: '01817041453',
-        address: createdAddresses[1]._id,
-        user: { email: 'monjur@example.com', password: '123456', roles: [Role.Admin] }
+        address: { street: 'Green Road', city: 'Dhanmondi', country: 'Bangladesh' },
+        user: createdUsers[0]._id
       },
     ];
 
     const createdStudents = await this.studentModel.create(studentsToCreate);
-    // const createdStudents = await this.studentModel.populate(createdStudents, { path: 'address', select: '-__v' });
-    // createdStudents.forEach((createdStudent, index) => {
-    //   createdStudent.address = createdAddresses[index];
-    // });
     return createdStudents;
   }
 
   async createTestAdmin(): Promise<Admin[]> {
+    await this.userModel.deleteMany({ roles: Role.Admin });
+    const hashed = await bcrypt.hash('123456', 10);
+    const usersToCreate = [
+      { email: 'admin1@example.com', password: hashed, roles: [Role.Admin] },
+      { email: 'admin2@example.com', password: hashed, roles: [Role.Admin] }
+    ];
+
+    const createdUsers = await this.userModel.create(usersToCreate);
     const adminsToCreate = [
       { 
         name: 'Admin1', 
-        user: { email: 'admin1@example.com', password: '123456', roles: [Role.Admin] }
+        user: createdUsers[0]._id
       },
       { 
         name: 'Admin2', 
-        user: { email: 'admin2@example.com', password: '123456', roles: [Role.Admin] }
+        user: createdUsers[1]._id
       },
     ];
 

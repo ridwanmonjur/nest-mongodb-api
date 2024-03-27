@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { User, UserSchema } from './user.entity';
-import { Address } from './address.entity';
+import { Address, AddressSchema } from './address.entity';
 
 @Schema()
 export class Student extends Document {
@@ -14,10 +14,10 @@ export class Student extends Document {
     @Prop({ type: String, required: true })
     instituteName: string;
 
-    @Prop({ type: UserSchema })
+    @Prop({ type: Types.ObjectId, ref: 'User' })
     user: User; 
 
-    @Prop({ type: Types.ObjectId, ref: 'Address' })
+    @Prop({ type: AddressSchema })
     address: Address;
 }
 

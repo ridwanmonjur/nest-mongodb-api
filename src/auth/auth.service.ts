@@ -1,7 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 import { SignupDto } from './dto/SignupDto.dto';
+import { LoginDto } from './dto/LoginDto.dto';
+
 
 @Injectable()
 export class AuthService {
@@ -10,31 +14,31 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, pass: string): Promise<any> {
-    const user = await this.usersService.findByEmail(email);
-    if (user && user.password === pass) {
-      const { password, ...result } = user;
-      return result;
+
+  async login(loginDto: LoginDto): Promise<any> {
+    const {email, password} = loginDto;
+    const user: User = await this.usersService.findByEmail(email);
+    console.log({user});
+    if (!user) {
+      throw new BadRequestException('User not found');
     }
-    return null;
+    const isMatch: boolean = bcrypt.compareSync(password, user.password);
+    if (!isMatch) {
+      throw new BadRequestException('Password does not match');
+    }
+    
+    return { access_token: this.jwtService.sign(user.toObject()) };
   }
 
-  async login(user: any) {
-    const payload = {
-      email: user.email,
-      sub: user.userId,
-      roles: user.roles,
-    };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
-  }
+  async register(user: SignupDto): Promise<any> {
+    const existingUser = this.usersService.findByEmail(user.email);
+    if (existingUser) {
+      throw new BadRequestException('email already exists');
+    }
 
-  async signup(signupDto: SignupDto) {
-    return {
-        message: 'User registered successfully',
-        username: signupDto.email,
-    };
+    const hashedPassword = await bcrypt.hash(user.password, 10);
+    const newUser = await this.usersService.createUser(user.email, hashedPassword, user.roles);
+    return newUser;
   }
 
   async testAdminData() {

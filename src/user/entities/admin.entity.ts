@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { User, UserSchema } from './user.entity';
 
 @Schema()
@@ -7,7 +7,7 @@ export class Admin extends Document {
     @Prop({ type: String, required: true })
     name?: String;
 
-    @Prop({ type: UserSchema })
+    @Prop({ type: Types.ObjectId, ref: 'User' })
     user: User; 
 }
 

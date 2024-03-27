@@ -3,13 +3,15 @@ import { UserService } from './user.service';
 import { HasRoles } from 'src/auth/has-roles.decorator';
 import { Role } from 'src/role.enum';
 import { JwtGuard } from 'src/auth/jwt.guard';
+import { RolesGuard } from 'src/auth/roles.guard';
 
 @Controller('api/user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get('/student')
-  @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard, RolesGuard)
+  @HasRoles(Role.Admin)
   findAllStudents() {
     return this.userService.findAllStudents();
   }
