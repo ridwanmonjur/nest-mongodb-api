@@ -10,7 +10,7 @@ export class UserController {
     return this.userService.findAllStudents();
   }
 
-  @Get('/student/populate')
+  @Get('/student/testData')
   populate(@Param('id') id: string) {
     this.userService.removeAllStudents();
     return this.userService.createTestStudents();

@@ -1,34 +1,40 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
 import { CourseService } from './course.service';
 import { CreateCourseDto } from './dto/create-course.dto';
+import { Course } from './entities/course.entity';
 import { UpdateCourseDto } from './dto/update-course.dto';
 
-@Controller('course')
+@Controller('api/course')
 export class CourseController {
   constructor(private readonly courseService: CourseService) {}
 
   @Post()
-  create(@Body() createCourseDto: CreateCourseDto) {
-    return this.courseService.create(createCourseDto);
+  async create(@Body() createCourse: CreateCourseDto): Promise<Course> {
+    return this.courseService.create(createCourse);
   }
 
   @Get()
-  findAll() {
+  async findAll(): Promise<Course[]> {
     return this.courseService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.courseService.findOne(+id);
+  @Get('/testData')
+  async createTestData(): Promise<Course[]> {
+    return this.courseService.createTestData();
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCourseDto: UpdateCourseDto) {
-    return this.courseService.update(+id, updateCourseDto);
+  @Get(':id')
+  async findOne(@Param('id') id: string): Promise<Course> {
+    return this.courseService.findOne(id);
+  }
+
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() updateCourse: UpdateCourseDto): Promise<Course> {
+    return this.courseService.update(id, updateCourse);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.courseService.remove(+id);
+  async remove(@Param('id') id: string): Promise<Course> {
+    return this.courseService.remove(id);
   }
 }
