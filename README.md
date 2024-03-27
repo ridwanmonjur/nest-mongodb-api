@@ -89,6 +89,8 @@ http://localhost:8000/api/course/
 ```bash
 3. Student List
 
+Must have bearer token
+
 http://localhost:8000/api/user/student/
 
 
