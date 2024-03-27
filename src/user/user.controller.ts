@@ -23,6 +23,8 @@ export class UserController {
   }
 
   @Get('/student/:id')
+  @UseGuards(JwtGuard, RolesGuard)
+  @HasRoles(Role.Admin)
   findOneStudent(@Param('id') id: string) {
     return this.userService.findOneStudent(id);
   }
