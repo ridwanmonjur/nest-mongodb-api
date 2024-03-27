@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { FilterQuery, Model, PaginateModel, PaginateResult } from 'mongoose';
 import { Course } from './entities/course.entity';
 import { Schedule } from './entities/schedule.entity';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
+import { CourseFilterDto } from './dto/filter-course.dto';
+import { PaginationParams } from './dto/PaginationParams.dto';
 
 @Injectable()
 export class CourseService {
   constructor(
-    @InjectModel(Course.name) private readonly courseModel: Model<Course>,
+    @InjectModel(Course.name) private readonly courseModel: PaginateModel<Course>,
     @InjectModel(Course.name) private readonly scheduleModel: Model<Schedule>,
   ) {}
 
@@ -19,8 +21,25 @@ export class CourseService {
     return savedCourse;
   }
 
-  async findAll(): Promise<Course[]> {
-    return await this.courseModel.find().exec();
+  async findAll(
+    skip: number = 10, limit: number = 10, filterDto: CourseFilterDto
+  ): Promise<PaginateResult<Course[]>> {
+    const { startDate, endDate } = filterDto;
+    const conditions: any = {};
+    
+    if (startDate) {
+      conditions['schedule.startDate'] = this.getQuery(startDate);
+    }
+    
+    if (endDate) {
+      conditions['schedule.endDate'] = this.getQuery(endDate);
+    }
+
+    console.log({conditions, filterDto});
+    return await this.courseModel
+      .paginate( conditions, {
+        skip, limit
+      });
   }
 
   async findOne(id: string): Promise<Course> {
@@ -35,6 +54,12 @@ export class CourseService {
 
   async remove(id: string): Promise<Course> {
     return await this.courseModel.findByIdAndDelete(id).exec();
+  }
+
+  getQuery(value: string): any {
+    let query = JSON.stringify(value);
+    query = query.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+    return JSON.parse(query);
   }
 
   async createTestData(): Promise<Course[]> {
@@ -71,7 +96,9 @@ export class CourseService {
     },
   ];
 
-  const seededCourses = await this.courseModel.create(coursesToSeed);
-  return seededCourses;
+    const seededCourses = await this.courseModel.create(coursesToSeed);
+    return seededCourses;
   }
+
+
 }

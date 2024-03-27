@@ -10,7 +10,14 @@ import { MongooseModule } from '@nestjs/mongoose';
 dotenv.config()
 console.log({env: process.env.MONGO_URI})
 @Module({
-  imports: [MongooseModule.forRoot(process.env.MONGO_URI), 
+  imports: [MongooseModule.forRoot(process.env.MONGO_URI,
+      {
+        connectionFactory: (connection) => {
+          connection.plugin(require('mongoose-paginate-v2'));
+          return connection;
+        },
+      },
+    ), 
     CourseModule, UserModule, AuthModule
   ],
   controllers: [AppController],

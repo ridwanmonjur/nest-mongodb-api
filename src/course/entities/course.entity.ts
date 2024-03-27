@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { Schedule } from './schedule.entity';
+import * as mongoosePaginate from 'mongoose-paginate-v2';
 
 @Schema()
 export class Course extends Document {
@@ -21,10 +22,10 @@ export class Course extends Document {
 
   @Prop({ type: [String], required: true })
   topics: string[];
-  
+
   @Prop({ type: Schedule })
   schedule: Schedule; 
 }
 
 export const CourseSchema = SchemaFactory.createForClass(Course);
-
+CourseSchema.plugin(mongoosePaginate);

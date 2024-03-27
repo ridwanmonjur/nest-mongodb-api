@@ -1,8 +1,11 @@
-import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, Query } from '@nestjs/common';
 import { CourseService } from './course.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { Course } from './entities/course.entity';
 import { UpdateCourseDto } from './dto/update-course.dto';
+import { CourseFilterDto } from './dto/filter-course.dto';
+import { PaginationParams } from './dto/PaginationParams.dto';
+import { PaginateResult } from 'mongoose';
 
 @Controller('api/course')
 export class CourseController {
@@ -14,8 +17,14 @@ export class CourseController {
   }
 
   @Get()
-  async findAll(): Promise<Course[]> {
-    return this.courseService.findAll();
+  async findAll(
+    @Query() paginationParams: PaginationParams,
+    @Query() filterDto: CourseFilterDto
+  ): Promise<PaginateResult<Course[]>> {
+    const { skip, limit } = paginationParams;
+    return this.courseService.findAll(
+      skip, limit, filterDto
+    );
   }
 
   @Get('/testData')
