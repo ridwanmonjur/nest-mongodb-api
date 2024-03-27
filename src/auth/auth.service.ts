@@ -14,7 +14,6 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-
   async login(loginDto: LoginDto): Promise<any> {
     const {email, password} = loginDto;
     const user: User = await this.usersService.findByEmail(email);
@@ -31,7 +30,8 @@ export class AuthService {
   }
 
   async register(user: SignupDto): Promise<any> {
-    const existingUser = this.usersService.findByEmail(user.email);
+    const existingUser = await this.usersService.findByEmail(user.email);
+    console.log({existingUser, exists: true});
     if (existingUser) {
       throw new BadRequestException('email already exists');
     }
