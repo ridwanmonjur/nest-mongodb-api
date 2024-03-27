@@ -58,11 +58,17 @@ http://localhost:8000/auth/login
   "password": "123456"
 }
 
-2.1. Course List with pagination and datewise filtration
+2.1. Course List with pagination based official mongoose-paginate-v2 library and datewise filtration
 
 Must have bearer token
 
+Paginate using: 1. Limit and 2. skip
+
+Filter using startDate and endDate and MongoDB operators: e.g. $gte, $lt, etc.
+
 http://localhost:8000/api/course?page=1&startDate[gte]=2023-04-01
+
+http://localhost:8000/api/course?limit=20&startDate[gte]=2023-04-01
 
 http://localhost:8000/api/course?page=1&endDate[lte]=2023-04-01
 
