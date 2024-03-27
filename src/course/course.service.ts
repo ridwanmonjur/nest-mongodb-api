@@ -6,7 +6,6 @@ import { Schedule } from './entities/schedule.entity';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { CourseFilterDto } from './dto/filter-course.dto';
-import { PaginationParams } from './dto/PaginationParams.dto';
 
 @Injectable()
 export class CourseService {
@@ -21,12 +20,12 @@ export class CourseService {
     return savedCourse;
   }
 
-  async findAll(
-    skip: number = 10, limit: number = 10, filterDto: CourseFilterDto
-  ): Promise<PaginateResult<Course[]>> {
-    const { startDate, endDate } = filterDto;
+  async findAll(filterDto: CourseFilterDto): Promise<PaginateResult<Course[]>> {
+    let { startDate, endDate, page, limit } = filterDto;
+    console.log({ page, limit});
+    page = page ? parseInt(page) : 1;
+    limit = limit ? parseInt(limit) : 10;
     const conditions: any = {};
-    
     if (startDate) {
       conditions['schedule.startDate'] = this.getQuery(startDate);
     }
@@ -35,11 +34,9 @@ export class CourseService {
       conditions['schedule.endDate'] = this.getQuery(endDate);
     }
 
-    console.log({conditions, filterDto});
+    console.log({conditions, filterDto, page, limit});
     return await this.courseModel
-      .paginate( conditions, {
-        skip, limit
-      });
+      .paginate( {...conditions }, { page, limit });
   }
 
   async findOne(id: string): Promise<Course> {

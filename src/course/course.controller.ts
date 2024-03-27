@@ -4,7 +4,6 @@ import { CreateCourseDto } from './dto/create-course.dto';
 import { Course } from './entities/course.entity';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { CourseFilterDto } from './dto/filter-course.dto';
-import { PaginationParams } from './dto/PaginationParams.dto';
 import { PaginateResult } from 'mongoose';
 import { JwtGuard } from 'src/auth/jwt.guard';
 import { RolesGuard } from 'src/auth/roles.guard';
@@ -26,13 +25,9 @@ export class CourseController {
   @UseGuards(JwtGuard, RolesGuard)
   @HasRoles(Role.Admin)
   async findAll(
-    @Query() paginationParams: PaginationParams,
     @Query() filterDto: CourseFilterDto
   ): Promise<PaginateResult<Course[]>> {
-    const { skip, limit } = paginationParams;
-    return this.courseService.findAll(
-      skip, limit, filterDto
-    );
+    return this.courseService.findAll(filterDto);
   }
 
   @Get('/testData')

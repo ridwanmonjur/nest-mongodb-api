@@ -6,5 +6,11 @@ export class CourseFilterDto {
 
   @IsOptional()
   endDate?: any;
+
+  @IsOptional()
+  page?: any;
+ 
+  @IsOptional()
+  limit?: any;
 }
 
